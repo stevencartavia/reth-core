@@ -2254,7 +2254,6 @@ dependencies = [
 [[package]]
 name = "reth-zstd-compressors"
 version = "1.11.3"
-source = "git+https://github.com/paradigmxyz/reth?rev=bbed2e9#bbed2e9ebfb51c7128c0c91826572c4e7a86733e"
 dependencies = [
  "zstd",
 ]

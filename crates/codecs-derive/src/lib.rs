@@ -12,9 +12,9 @@
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use syn::{
-    DeriveInput, Result, Token, bracketed,
+    bracketed,
     parse::{Parse, ParseStream},
-    parse_macro_input,
+    parse_macro_input, DeriveInput, Result, Token,
 };
 
 mod arbitrary;
@@ -69,8 +69,8 @@ pub fn derive_zstd(input: TokenStream) -> TokenStream {
     let mut decompressor = None;
 
     for attr in &input.attrs {
-        if attr.path().is_ident("reth_zstd")
-            && let Err(err) = attr.parse_nested_meta(|meta| {
+        if attr.path().is_ident("reth_zstd") &&
+            let Err(err) = attr.parse_nested_meta(|meta| {
                 if meta.path.is_ident("compressor") {
                     let value = meta.value()?;
                     let path: syn::Path = value.parse()?;
@@ -96,13 +96,7 @@ pub fn derive_zstd(input: TokenStream) -> TokenStream {
         .into();
     };
 
-    compact::derive(
-        input,
-        Some(ZstdConfig {
-            compressor,
-            decompressor,
-        }),
-    )
+    compact::derive(input, Some(ZstdConfig { compressor, decompressor }))
 }
 
 /// Generates tests for given type.
@@ -150,11 +144,7 @@ impl Parse for GenerateTestsInput {
         input.parse::<Token![,]>()?;
         let mod_name = input.parse()?;
 
-        Ok(Self {
-            args: args.into(),
-            ty,
-            mod_name,
-        })
+        Ok(Self { args: args.into(), ty, mod_name })
     }
 }
 

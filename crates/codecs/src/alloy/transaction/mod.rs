@@ -1,8 +1,8 @@
 //! Compact implementation for transaction types
 use crate::Compact;
 use alloy_consensus::{
-    EthereumTypedTransaction, TxType,
     transaction::{RlpEcdsaEncodableTx, TxEip1559, TxEip2930, TxEip7702, TxLegacy},
+    EthereumTypedTransaction, TxType,
 };
 use alloy_primitives::bytes::BufMut;
 
@@ -96,10 +96,7 @@ mod tests {
     #[cfg(feature = "op")]
     #[test]
     fn test_ensure_backwards_compatibility_optimism() {
-        assert_eq!(
-            crate::alloy::transaction::optimism::TxDeposit::bitflag_encoded_bytes(),
-            2
-        );
+        assert_eq!(crate::alloy::transaction::optimism::TxDeposit::bitflag_encoded_bytes(), 2);
     }
 
     #[test]

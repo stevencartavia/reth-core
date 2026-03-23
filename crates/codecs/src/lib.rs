@@ -541,10 +541,7 @@ mod tests {
         buf.push(1);
 
         assert_eq!(&buf[..arr.len()], &arr);
-        assert_eq!(
-            Bytes::from_compact(&buf, list.len()),
-            (list, vec![1].as_slice())
-        );
+        assert_eq!(Bytes::from_compact(&buf, list.len()), (list, vec![1].as_slice()));
     }
 
     #[test]
@@ -557,10 +554,7 @@ mod tests {
         buf.push(1);
 
         // Address shouldn't care about the len passed, since it's not actually compacted.
-        assert_eq!(
-            Address::from_compact(&buf, 1000),
-            (Address::ZERO, vec![1u8].as_slice())
-        );
+        assert_eq!(Address::from_compact(&buf, 1000), (Address::ZERO, vec![1u8].as_slice()));
     }
 
     #[test]
@@ -573,10 +567,7 @@ mod tests {
         buf.push(1);
 
         // B256 shouldn't care about the len passed, since it's not actually compacted.
-        assert_eq!(
-            B256::from_compact(&buf, 1000),
-            (B256::ZERO, vec![1u8].as_slice())
-        );
+        assert_eq!(B256::from_compact(&buf, 1000), (B256::ZERO, vec![1u8].as_slice()));
     }
 
     #[test]
@@ -607,24 +598,15 @@ mod tests {
         assert_eq!(opt.to_compact(&mut buf), 1);
         assert_eq!(buf.len(), 1 + 32);
 
-        assert_eq!(
-            Option::<B256>::from_compact(&buf, 1),
-            (opt, vec![].as_slice())
-        );
+        assert_eq!(Option::<B256>::from_compact(&buf, 1), (opt, vec![].as_slice()));
 
         // If `None`, it returns the slice at the same cursor position.
-        assert_eq!(
-            Option::<B256>::from_compact(&buf, 0),
-            (None, buf.as_slice())
-        );
+        assert_eq!(Option::<B256>::from_compact(&buf, 0), (None, buf.as_slice()));
 
         let mut buf = Vec::with_capacity(32);
         assert_eq!(opt.specialized_to_compact(&mut buf), 1);
         assert_eq!(buf.len(), 32);
-        assert_eq!(
-            Option::<B256>::specialized_from_compact(&buf, 1),
-            (opt, vec![].as_slice())
-        );
+        assert_eq!(Option::<B256>::specialized_from_compact(&buf, 1), (opt, vec![].as_slice()));
     }
 
     #[test]
@@ -655,10 +637,7 @@ mod tests {
 
         assert_eq!(U256::from(2).to_compact(&mut buf), 1);
         assert_eq!(buf, vec![2u8]);
-        assert_eq!(
-            U256::from_compact(&buf, 1),
-            (U256::from(2), vec![].as_slice())
-        );
+        assert_eq!(U256::from_compact(&buf, 1), (U256::from(2), vec![].as_slice()));
     }
 
     #[test]
@@ -677,10 +656,7 @@ mod tests {
 
         assert_eq!(0xffffffffffffffffu64.to_compact(&mut buf), 8);
         assert_eq!(&buf, &[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]);
-        assert_eq!(
-            u64::from_compact(&buf, 8),
-            (0xffffffffffffffffu64, vec![].as_slice())
-        );
+        assert_eq!(u64::from_compact(&buf, 8), (0xffffffffffffffffu64, vec![].as_slice()));
     }
 
     #[test]
@@ -715,10 +691,7 @@ mod tests {
             assert_eq!(vec_list.specialized_to_compact(&mut vec_buf), 0);
 
             let mut slice_buf = vec![];
-            assert_eq!(
-                vec_list.as_slice().specialized_to_compact(&mut slice_buf),
-                0
-            );
+            assert_eq!(vec_list.as_slice().specialized_to_compact(&mut slice_buf), 0);
 
             assert_eq!(vec_buf, slice_buf);
         }

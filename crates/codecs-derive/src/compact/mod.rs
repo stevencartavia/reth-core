@@ -48,31 +48,13 @@ pub enum FieldTypes {
 pub fn derive(input: DeriveInput, zstd: Option<ZstdConfig>) -> TokenStream {
     let mut output = quote! {};
 
-    let DeriveInput {
-        ident,
-        data,
-        generics,
-        attrs,
-        ..
-    } = input;
+    let DeriveInput { ident, data, generics, attrs, .. } = input;
 
     let has_lifetime = has_lifetime(&generics);
 
     let fields = get_fields(&data);
-    output.extend(generate_flag_struct(
-        &ident,
-        &attrs,
-        has_lifetime,
-        &fields,
-        zstd.is_some(),
-    ));
-    output.extend(generate_from_to(
-        &ident,
-        &attrs,
-        has_lifetime,
-        &fields,
-        zstd,
-    ));
+    output.extend(generate_flag_struct(&ident, &attrs, has_lifetime, &fields, zstd.is_some()));
+    output.extend(generate_from_to(&ident, &attrs, has_lifetime, &fields, zstd));
     output.into()
 }
 
@@ -168,20 +150,13 @@ fn load_field_from_segments(
         if is_enum {
             fields.push(FieldTypes::EnumUnnamedField((ftype, use_alt_impl)));
         } else {
-            let should_compact = is_flag_type(&ftype)
-                || field.attrs.iter().any(|attr| {
-                    attr.path()
-                        .segments
-                        .iter()
-                        .any(|path| path.ident == "maybe_zero")
+            let should_compact = is_flag_type(&ftype) ||
+                field.attrs.iter().any(|attr| {
+                    attr.path().segments.iter().any(|path| path.ident == "maybe_zero")
                 });
 
             fields.push(FieldTypes::StructField(StructFieldDescriptor {
-                name: field
-                    .ident
-                    .as_ref()
-                    .map(|i| i.to_string())
-                    .unwrap_or_default(),
+                name: field.ident.as_ref().map(|i| i.to_string()).unwrap_or_default(),
                 ftype,
                 is_compact: should_compact,
                 use_alt_impl,
@@ -196,20 +171,13 @@ fn load_field_from_segments(
 ///
 /// If so, we use another impl to code/decode its data.
 fn should_use_alt_impl(ftype: &str, segment: &syn::PathSegment) -> bool {
-    if (ftype == "Vec" || ftype == "Option")
-        && let syn::PathArguments::AngleBracketed(ref args) = segment.arguments
-        && let Some(syn::GenericArgument::Type(syn::Type::Path(arg_path))) = args.args.last()
-        && let (Some(path), 1) = (arg_path.path.segments.first(), arg_path.path.segments.len())
-        && [
-            "B256",
-            "Address",
-            "Bloom",
-            "TxHash",
-            "BlockHash",
-            "CompactPlaceholder",
-        ]
-        .iter()
-        .any(|&s| path.ident == s)
+    if (ftype == "Vec" || ftype == "Option") &&
+        let syn::PathArguments::AngleBracketed(ref args) = segment.arguments &&
+        let Some(syn::GenericArgument::Type(syn::Type::Path(arg_path))) = args.args.last() &&
+        let (Some(path), 1) = (arg_path.path.segments.first(), arg_path.path.segments.len()) &&
+        ["B256", "Address", "Bloom", "TxHash", "BlockHash", "CompactPlaceholder"]
+            .iter()
+            .any(|&s| path.ident == s)
     {
         return true;
     }
@@ -260,9 +228,7 @@ mod tests {
 
         // Generate code that will impl the `Compact` trait.
         let mut output = quote! {};
-        let DeriveInput {
-            ident, data, attrs, ..
-        } = parse2(f_struct).unwrap();
+        let DeriveInput { ident, data, attrs, .. } = parse2(f_struct).unwrap();
         let fields = get_fields(&data);
         output.extend(generate_flag_struct(&ident, &attrs, false, &fields, false));
         output.extend(generate_from_to(&ident, &attrs, false, &fields, None));

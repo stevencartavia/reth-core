@@ -55,22 +55,17 @@ impl From<CompactOpReceipt<'_>> for OpReceipt {
             deposit_receipt_version,
         } = receipt;
 
-        let inner = Receipt {
-            status: success.into(),
-            cumulative_gas_used,
-            logs: logs.into_owned(),
-        };
+        let inner =
+            Receipt { status: success.into(), cumulative_gas_used, logs: logs.into_owned() };
 
         match tx_type {
             OpTxType::Legacy => Self::Legacy(inner),
             OpTxType::Eip2930 => Self::Eip2930(inner),
             OpTxType::Eip1559 => Self::Eip1559(inner),
             OpTxType::Eip7702 => Self::Eip7702(inner),
-            OpTxType::Deposit => Self::Deposit(OpDepositReceipt {
-                inner,
-                deposit_nonce,
-                deposit_receipt_version,
-            }),
+            OpTxType::Deposit => {
+                Self::Deposit(OpDepositReceipt { inner, deposit_nonce, deposit_receipt_version })
+            }
         }
     }
 }
