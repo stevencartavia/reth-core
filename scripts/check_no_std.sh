@@ -2,6 +2,7 @@
 set -eo pipefail
 
 no_std_packages=(
+  reth-codecs
   reth-codecs-derive
 )
 

@@ -7,6 +7,7 @@ use core::{
     fmt::{self, Debug},
 };
 
+#[cfg(feature = "std")]
 mod scale;
 
 /// Error type returned by [`Decompress`] trait.
