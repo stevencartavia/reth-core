@@ -48,13 +48,13 @@ pub trait Decompress: Send + Sync + Sized + Debug {
     }
 }
 
-/// Implements [`Compress`] and [`Decompress`] for types that implement [`Compact`].
+/// Implements [`Compress`] and [`Decompress`] for types that implement [`crate::Compact`].
 #[macro_export]
 macro_rules! impl_compression_for_compact {
     ($($name:ident$(<$($generic:ident),*>)?),+) => {
         $(
             impl$(<$($generic: core::fmt::Debug + Send + Sync + $crate::Compact),*>)? $crate::Compress for $name$(<$($generic),*>)? {
-                type Compressed = Vec<u8>;
+                type Compressed = alloc::vec::Vec<u8>;
 
                 fn compress_to_buf<B: bytes::BufMut + AsMut<[u8]>>(&self, buf: &mut B) {
                     let _ = $crate::Compact::to_compact(self, buf);
@@ -71,14 +71,14 @@ macro_rules! impl_compression_for_compact {
     };
 }
 
-/// Implements [`Compress`] and [`Decompress`] for types that implement [`Compact`] and have a
-/// fixed-size uncompressable representation.
+/// Implements [`Compress`] and [`Decompress`] for types that implement [`crate::Compact`] and have
+/// a fixed-size uncompressable representation.
 #[macro_export]
 macro_rules! impl_compression_fixed_compact {
     ($($name:tt),+) => {
         $(
             impl $crate::Compress for $name {
-                type Compressed = Vec<u8>;
+                type Compressed = alloc::vec::Vec<u8>;
 
                 fn uncompressable_ref(&self) -> Option<&[u8]> {
                     Some(self.as_ref())

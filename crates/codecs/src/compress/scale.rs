@@ -5,7 +5,7 @@ macro_rules! impl_compression_for_scale {
     ($($name:ty),+) => {
         $(
             impl Compress for $name {
-                type Compressed = Vec<u8>;
+                type Compressed = alloc::vec::Vec<u8>;
 
                 fn compress(self) -> Self::Compressed {
                     parity_scale_codec::Encode::encode(&self)
@@ -25,14 +25,14 @@ macro_rules! impl_compression_for_scale {
     };
 }
 
-impl_compression_for_scale!(u8, u32, u16, u64, Vec<u8>);
+impl_compression_for_scale!(u8, u32, u16, u64, alloc::vec::Vec<u8>);
 
 #[repr(transparent)]
 struct OutputCompat<B>(B);
 
 impl<B> OutputCompat<B> {
     fn wrap_mut(buf: &mut B) -> &mut Self {
-        unsafe { std::mem::transmute(buf) }
+        unsafe { core::mem::transmute(buf) }
     }
 }
 

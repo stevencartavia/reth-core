@@ -6,6 +6,8 @@ yanked = "warn"
 ignore = [
     # https://rustsec.org/advisories/RUSTSEC-2023-0089 atomic-polyfill is unmaintained, transitive dep via test-fuzz
     "RUSTSEC-2023-0089",
+    # https://rustsec.org/advisories/RUSTSEC-2024-0436 paste! is unmaintained
+    "RUSTSEC-2024-0436",
 ]
 
 # This section is considered when running `cargo deny check bans`.

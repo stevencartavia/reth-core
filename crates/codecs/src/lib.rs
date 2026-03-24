@@ -30,11 +30,7 @@ use alloc::{
     vec::Vec,
 };
 
-#[cfg(feature = "test-utils")]
-pub mod alloy;
-
-#[cfg(not(feature = "test-utils"))]
-#[cfg(any(test, feature = "alloy"))]
+#[cfg(feature = "alloy")]
 pub mod alloy;
 
 pub mod compress;
@@ -528,8 +524,10 @@ const fn decode_varuint_panic() -> ! {
 }
 
 #[cfg(test)]
+#[cfg(feature = "std")]
 mod tests {
     use super::*;
+    use alloc::vec;
     use alloy_primitives::B256;
     use serde::{Deserialize, Serialize};
 
