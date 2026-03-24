@@ -2,7 +2,7 @@
 set -eo pipefail
 
 no_std_packages=(
-  alloy-evm
+  reth-codecs-derive
 )
 
 for package in "${no_std_packages[@]}"; do
